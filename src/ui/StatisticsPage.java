@@ -44,7 +44,7 @@ public class StatisticsPage extends MyComposite {
 			TableItem item = new TableItem(table, SWT.NULL);
 			item.setText("Item " + loopIndex);
 			item.setText(0, "Item " + loopIndex);
-			item.setText(1, "0%");
+			item.setText(1, "100%");
 		}
 
 		for (int loopIndex = 0; loopIndex < titles.length; loopIndex++) {
