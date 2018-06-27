@@ -18,6 +18,7 @@ class ModelsUnit {
 
 		assertEquals(word.getCountOfSuccessor("love"), 2);
 		assertEquals(word.getCountOfSuccessor("hate"), 1);
+		assertEquals(word.getCountOfSuccessor("like"), 0);
 
 	}
 
