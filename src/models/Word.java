@@ -20,17 +20,17 @@ public class Word {
 		this.value = value;
 	}
 
-	public SetMap getSuccessors() {
+	public SetMap<Word> getSuccessors() {
 		return successors;
 	}
 
-	public void setSuccessors(SetMap successors) {
+	public void setSuccessors(SetMap<Word> successors) {
 		this.successors = successors;
 	}
 
 	@Override
 	public String toString() {
-		return value + successors.toString();
+		return value;// + successors.toString();
 	}
 
 	@Override
@@ -38,10 +38,27 @@ public class Word {
 		if (obj instanceof Word) {
 			Word word = (Word) obj;
 			if (value.equals(word.value)) {
-				System.err.println(value + "==" + word.value);
 				return true;
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		String valueAux = value.toLowerCase();
+		int res = 0;
+		for (int i = 0; i < valueAux.length(); i++) {
+			res += (37 * Character.getNumericValue(valueAux.charAt(i)));
+		}
+		return res;
+	}
+
+	public int getCountOfSuccessor(String wordValue) {
+		return successors.getCountFor(new Word(wordValue));
+	}
+
+	public int getCountOfSuccessor(Word wordValue) {
+		return successors.getCountFor(wordValue);
 	}
 }
