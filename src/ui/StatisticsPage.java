@@ -31,9 +31,9 @@ public class StatisticsPage extends MyComposite {
 		statLData.left = new FormAttachment(0, 30);
 		statLabel.setLayoutData(statLData);
 
-		Table table = new Table(this, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		Table table = new Table(this, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		table.setHeaderVisible(true);
-		String[] titles = { "Col 1", "Col 2", "Col 3", "Col 4" };
+		String[] titles = { "Word", "Frequency" };
 
 		for (int loopIndex = 0; loopIndex < titles.length; loopIndex++) {
 			TableColumn column = new TableColumn(table, SWT.NULL);
@@ -45,8 +45,6 @@ public class StatisticsPage extends MyComposite {
 			item.setText("Item " + loopIndex);
 			item.setText(0, "Item " + loopIndex);
 			item.setText(1, "Yes");
-			item.setText(2, "No");
-			item.setText(3, "A table item");
 		}
 
 		for (int loopIndex = 0; loopIndex < titles.length; loopIndex++) {
@@ -54,8 +52,13 @@ public class StatisticsPage extends MyComposite {
 		}
 
 		table.setBounds(25, 25, 220, 200);
-		
-		FormData formData=new FormData();
+
+		FormData tableData = new FormData();
+		tableData.top = new FormAttachment(statLabel, 30);
+		tableData.bottom = new FormAttachment(100, -30);
+		tableData.right = new FormAttachment(100, -30);
+		tableData.left = new FormAttachment(0, 30);
+		table.setLayoutData(tableData);
 
 	}
 
