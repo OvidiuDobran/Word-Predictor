@@ -1,9 +1,9 @@
 package ui;
 
+import java.io.IOException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -12,7 +12,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+
+import application.Application;
 
 public class UIHandler {
 	private static volatile UIHandler instance;
@@ -29,19 +32,21 @@ public class UIHandler {
 	private Button menuButton;
 	private Button processButton;
 	private boolean isExit;
+	private Application application;
 
-	private UIHandler() {
+	private UIHandler(Application application) {
+		this.application = application;
 		display = Display.getDefault();
 		shell = new Shell(display, SWT.CLOSE | SWT.TITLE | SWT.BORDER | SWT.APPLICATION_MODAL | SWT.MIN);
 		shell.setSize(900, 600);
 
 	}
 
-	public static UIHandler getInstance() {
+	public static UIHandler getInstance(Application application) {
 		if (instance == null) {
 			synchronized (UIHandler.class) {
 				if (instance == null) {
-					return new UIHandler();
+					return new UIHandler(application);
 				}
 			}
 		}
@@ -128,6 +133,36 @@ public class UIHandler {
 			}
 		});
 
+		this.processButton.addListener(SWT.Selection, new Listener() {
+
+			@Override
+			public void handleEvent(Event arg0) {
+				if (layout.topControl == filePage) {
+					String filePath = filePage.path.getText();
+					try {
+						application.processTextFromFile(filePath);
+						MessageBox messageBox = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
+						messageBox.setText("Done");
+						messageBox
+								.setMessage("Your input was proccessed and saved. Thnaks for improving my knowledge!");
+						messageBox.open();
+						changePageTo(menuPage);
+					} catch (IOException e) {
+						MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.ERROR);
+						messageBox.setText("Invalid path");
+						messageBox.setMessage(
+								"I couldn't process the file you have submitted. Please make sure the path is valid!");
+						messageBox.open();
+					}
+
+				} else {
+					if (layout.topControl == keyboardPage) {
+						application.processTextFromKeyoboard(keyboardPage.inputText.getText());
+					}
+				}
+			}
+		});
+
 		menuPage.keyboardButton.addListener(SWT.Selection, new Listener() {
 
 			@Override
@@ -178,6 +213,9 @@ public class UIHandler {
 
 			this.processButton.setEnabled(true);
 			this.processButton.setVisible(true);
+		}
+		if (composite instanceof Refreshable) {
+			((Refreshable) composite).refresh();
 		}
 	}
 

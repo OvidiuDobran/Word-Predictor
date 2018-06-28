@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-public class StatisticsPage extends MyComposite {
+public class StatisticsPage extends MyComposite implements Refreshable{
 
 	public StatisticsPage(Composite parent) {
 		super(parent);
@@ -60,6 +60,11 @@ public class StatisticsPage extends MyComposite {
 		tableData.left = new FormAttachment(0, 30);
 		table.setLayoutData(tableData);
 
+	}
+
+	@Override
+	public void refresh() {
+		
 	}
 
 }

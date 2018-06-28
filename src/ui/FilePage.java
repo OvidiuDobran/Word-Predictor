@@ -9,7 +9,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class FilePage extends MyComposite {
+public class FilePage extends MyComposite implements Refreshable {
+
+	private String filePath;
+	Text path;
 
 	public FilePage(Composite parent) {
 		super(parent);
@@ -27,12 +30,21 @@ public class FilePage extends MyComposite {
 		fileLData.left = new FormAttachment(0, 30);
 		fileLabel.setLayoutData(fileLData);
 
-		Text path = new Text(this, SWT.BORDER);
+		path = new Text(this, SWT.BORDER);
 		FormData pathData = new FormData();
 		pathData.top = new FormAttachment(fileLabel, 30);
 		pathData.left = new FormAttachment(0, 30);
-		pathData.width=300;
+		pathData.width = 300;
 		path.setLayoutData(pathData);
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	@Override
+	public void refresh() {
+		path.setText("");
 	}
 
 }

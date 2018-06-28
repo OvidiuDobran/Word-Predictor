@@ -1,14 +1,20 @@
 package models;
 
-public class Word {
+import java.io.Serializable;
+import java.util.List;
+
+@SuppressWarnings("serial")
+public class Word implements Serializable {
 	private String value;
 	private SetMap<Word> successors = new SetMap<Word>();
+	public static final int NO_OF_SUGGESTIONS = 3;
 
 	public Word(String value) {
 		this.value = value;
 	}
 
 	public void addSuccessor(Word word) {
+		System.err.println(value + ": " + successors);
 		successors.add(word);
 	}
 
@@ -30,7 +36,7 @@ public class Word {
 
 	@Override
 	public String toString() {
-		return value;// + successors.toString();
+		return value + "(" + successors.size() + ")";// + successors.toString();
 	}
 
 	@Override
@@ -61,4 +67,9 @@ public class Word {
 	public int getCountOfSuccessor(Word wordValue) {
 		return successors.getCountFor(wordValue);
 	}
+
+	public List<Word> getSuggestions() {
+		return successors.getFirstN(NO_OF_SUGGESTIONS);
+	}
+
 }
