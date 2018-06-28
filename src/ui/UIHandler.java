@@ -1,9 +1,13 @@
 package ui;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -16,6 +20,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import application.Application;
+import models.Word;
 
 public class UIHandler {
 	private static volatile UIHandler instance;
@@ -135,16 +140,19 @@ public class UIHandler {
 
 		this.processButton.addListener(SWT.Selection, new Listener() {
 
+			MessageBox messageBox = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
+			{
+				messageBox.setText("Done");
+				messageBox.setMessage("Your input was proccessed and saved. Thnaks for improving my knowledge!");
+			}
+
 			@Override
 			public void handleEvent(Event arg0) {
 				if (layout.topControl == filePage) {
 					String filePath = filePage.path.getText();
 					try {
 						application.processTextFromFile(filePath);
-						MessageBox messageBox = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
-						messageBox.setText("Done");
-						messageBox
-								.setMessage("Your input was proccessed and saved. Thnaks for improving my knowledge!");
+
 						messageBox.open();
 						changePageTo(menuPage);
 					} catch (IOException e) {
@@ -158,6 +166,10 @@ public class UIHandler {
 				} else {
 					if (layout.topControl == keyboardPage) {
 						application.processTextFromKeyoboard(keyboardPage.inputText.getText());
+
+						messageBox.open();
+						changePageTo(menuPage);
+
 					}
 				}
 			}
@@ -187,6 +199,65 @@ public class UIHandler {
 			@Override
 			public void handleEvent(Event arg0) {
 				changePageTo(statisticsPage);
+			}
+		});
+
+		keyboardPage.inputText.addListener(SWT.Selection, new Listener() {
+
+			@Override
+			public void handleEvent(Event arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+		});
+
+		keyboardPage.inputText.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void keyReleased(KeyEvent arg0) {
+				String currentText = keyboardPage.inputText.getText();
+				System.err.println(currentText);
+				if (!currentText.endsWith(" ")) {
+					System.out.println("INSIDE WORD");
+					String currentWord;
+					if (currentText.contains(" ")) {
+						currentWord = currentText.substring(currentText.lastIndexOf(" "));
+					} else {
+						currentWord = currentText;
+					}
+					List<String> wordSuggestions = application.getWordStartingWith(currentWord);
+					String[] arrSuggestions = new String[wordSuggestions.size()];
+					for (int i = 0; i < wordSuggestions.size(); i++) {
+						arrSuggestions[i] = wordSuggestions.get(i);
+					}
+					System.out.println(Arrays.asList(wordSuggestions));
+					keyboardPage.suggestions.setItems(arrSuggestions);
+					// keyboardPage.suggestions.setItems(new String[] {"A11","B11","C11"});
+
+					System.out.println("INSIDE WORD " + currentWord);
+				} else {
+					int startIndex = currentText.substring(0, currentText.length() - 1).lastIndexOf(" ");
+					if (startIndex < 0) {
+						startIndex = 0;
+					}
+					int endIndex = currentText.lastIndexOf(" ");
+					String lastWord = currentText.substring(startIndex, endIndex);
+					List<Word> nextWords = application.getNextWordsOf(lastWord.trim());
+					String[] arrSuggestions = new String[nextWords.size()];
+					for (int i = 0; i < nextWords.size(); i++) {
+						arrSuggestions[i] = nextWords.get(i).getValue();
+					}
+					keyboardPage.suggestions.setItems(arrSuggestions);
+
+					System.out.println("END OF WORD: " + lastWord);
+				}
 			}
 		});
 

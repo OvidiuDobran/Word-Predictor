@@ -1,6 +1,8 @@
 package application;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import models.Word;
@@ -34,9 +36,24 @@ public class Application {
 		System.err.println(words.get(1).getSuggestions());
 	}
 
+	public void processTextFromKeyoboard(String text) {
+
+		String[] textOnLines = text.split("\\r?\\n");
+		List<String> lines = new ArrayList<String>(Arrays.asList(textOnLines));
+		while (lines.contains("")) {
+			lines.remove("");
+		}
+		processWordsFromStrings(lines);
+	}
+
 	public void processTextFromFile(String path) throws IOException {
-		List<String> wordsAsString = ioHandler.readFromTextFile(path);
-		System.out.println(wordsAsString);
+		List<String> lines = ioHandler.readFromTextFile(path);
+		System.out.println(lines);
+		processWordsFromStrings(lines);
+
+	}
+
+	private void processWordsFromStrings(List<String> wordsAsString) {
 		for (String line : wordsAsString) {
 			List<Word> newWords = wordOperationsHandler.parseTextIntoWords(line);
 			addNewWords(newWords);
@@ -46,7 +63,6 @@ public class Application {
 			}
 		}
 		System.out.println(words);
-
 	}
 
 	private void addNewWords(List<Word> newWords) {
@@ -76,10 +92,31 @@ public class Application {
 		this.words = words;
 	}
 
-	public void processTextFromKeyoboard(String text) {
-		System.out.println("--------------------------------------------------------------------------");
-		System.out.println(text);
-		System.out.println("--------------------------------------------------------------------------");
-
+	public List<String> getWordStartingWith(String currentWord) {
+		List<String> suggestions = new ArrayList<String>();
+		int counter = 0;
+		if (!"".equals(currentWord) && !" ".equals(currentWord)) {
+			for (Word word : words) {
+				if (word.getValue().startsWith(currentWord)) {
+					suggestions.add(word.getValue());
+					counter++;
+					if (counter >= 3) {
+						break;
+					}
+				}
+			}
+		}
+		return suggestions;
 	}
+
+	public List<Word> getNextWordsOf(String lastWord) {
+		Word word = new Word(lastWord);
+		if (words.contains(word)) {
+			int index = words.indexOf(word);
+			word = words.get(index);
+			return word.getSuggestions();
+		}
+		return new ArrayList<Word>();
+	}
+
 }
