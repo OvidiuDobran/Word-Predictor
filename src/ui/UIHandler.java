@@ -218,7 +218,6 @@ public class UIHandler {
 
 		keyboardPage.inputText.addKeyListener(new KeyListener() {
 
-
 			@Override
 			public void keyPressed(KeyEvent arg0) {
 				// TODO Auto-generated method stub
@@ -278,11 +277,11 @@ public class UIHandler {
 				if (selectedIndex != -1) {
 					String selectedItem = keyboardPage.suggestions.getItem(selectedIndex);
 					if (sequenceToReplace != null) {
-						int lastIndex=keyboardPage.currentText.lastIndexOf(sequenceToReplace);
-						String newText=keyboardPage.currentText.substring(0,lastIndex)+selectedItem;
+						int lastIndex = keyboardPage.currentText.lastIndexOf(sequenceToReplace);
+						String newText = keyboardPage.currentText.substring(0, lastIndex) + selectedItem;
 						keyboardPage.inputText.setText(newText);
-					}else {
-						String newText=keyboardPage.currentText+selectedItem;
+					} else {
+						String newText = keyboardPage.currentText + selectedItem;
 						keyboardPage.inputText.setText(newText);
 					}
 				}
