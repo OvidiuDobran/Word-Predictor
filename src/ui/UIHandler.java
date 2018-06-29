@@ -2,12 +2,15 @@ package ui;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -38,6 +41,7 @@ public class UIHandler {
 	private Button processButton;
 	private boolean isExit;
 	private Application application;
+	protected String sequenceToReplace;
 
 	private UIHandler(Application application) {
 		this.application = application;
@@ -214,6 +218,7 @@ public class UIHandler {
 
 		keyboardPage.inputText.addKeyListener(new KeyListener() {
 
+
 			@Override
 			public void keyPressed(KeyEvent arg0) {
 				// TODO Auto-generated method stub
@@ -222,15 +227,15 @@ public class UIHandler {
 
 			@Override
 			public void keyReleased(KeyEvent arg0) {
-				String currentText = keyboardPage.inputText.getText();
-				System.err.println(currentText);
-				if (!currentText.endsWith(" ")) {
+				keyboardPage.currentText = keyboardPage.inputText.getText();
+				System.err.println(keyboardPage.currentText);
+				if (!keyboardPage.currentText.endsWith(" ")) {
 					System.out.println("INSIDE WORD");
 					String currentWord;
-					if (currentText.contains(" ")) {
-						currentWord = currentText.substring(currentText.lastIndexOf(" "));
+					if (keyboardPage.currentText.contains(" ")) {
+						currentWord = keyboardPage.currentText.substring(keyboardPage.currentText.lastIndexOf(" "));
 					} else {
-						currentWord = currentText;
+						currentWord = keyboardPage.currentText;
 					}
 					List<String> wordSuggestions = application.getWordStartingWith(currentWord);
 					String[] arrSuggestions = new String[wordSuggestions.size()];
@@ -239,16 +244,18 @@ public class UIHandler {
 					}
 					System.out.println(Arrays.asList(wordSuggestions));
 					keyboardPage.suggestions.setItems(arrSuggestions);
-					// keyboardPage.suggestions.setItems(new String[] {"A11","B11","C11"});
+
+					sequenceToReplace = currentWord;
 
 					System.out.println("INSIDE WORD " + currentWord);
 				} else {
-					int startIndex = currentText.substring(0, currentText.length() - 1).lastIndexOf(" ");
+					int startIndex = keyboardPage.currentText.substring(0, keyboardPage.currentText.length() - 1)
+							.lastIndexOf(" ");
 					if (startIndex < 0) {
 						startIndex = 0;
 					}
-					int endIndex = currentText.lastIndexOf(" ");
-					String lastWord = currentText.substring(startIndex, endIndex);
+					int endIndex = keyboardPage.currentText.lastIndexOf(" ");
+					String lastWord = keyboardPage.currentText.substring(startIndex, endIndex);
 					List<Word> nextWords = application.getNextWordsOf(lastWord.trim());
 					String[] arrSuggestions = new String[nextWords.size()];
 					for (int i = 0; i < nextWords.size(); i++) {
@@ -256,8 +263,35 @@ public class UIHandler {
 					}
 					keyboardPage.suggestions.setItems(arrSuggestions);
 
+					sequenceToReplace = null;
+
 					System.out.println("END OF WORD: " + lastWord);
 				}
+			}
+		});
+
+		keyboardPage.suggestions.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				int selectedIndex = keyboardPage.suggestions.getSelectionIndex();
+				if (selectedIndex != -1) {
+					String selectedItem = keyboardPage.suggestions.getItem(selectedIndex);
+					if (sequenceToReplace != null) {
+						int lastIndex=keyboardPage.currentText.lastIndexOf(sequenceToReplace);
+						String newText=keyboardPage.currentText.substring(0,lastIndex)+selectedItem;
+						keyboardPage.inputText.setText(newText);
+					}else {
+						String newText=keyboardPage.currentText+selectedItem;
+						keyboardPage.inputText.setText(newText);
+					}
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+
 			}
 		});
 

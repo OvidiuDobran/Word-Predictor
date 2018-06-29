@@ -5,7 +5,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -15,6 +14,7 @@ public class KeyboardPage extends MyComposite implements Refreshable {
 
 	Text inputText;
 	Combo suggestions;
+	protected String currentText;
 
 	public KeyboardPage(Composite parent) {
 		super(parent);
@@ -37,8 +37,6 @@ public class KeyboardPage extends MyComposite implements Refreshable {
 		suggestionData.top = new FormAttachment(inputLabel, 30);
 		suggestionData.left = new FormAttachment(0, 30);
 		suggestions.setLayoutData(suggestionData);
-		
-		suggestions.setItems(new String[] {"A","B","C"});
 
 		inputText = new Text(this, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
 		FormData inputTData = new FormData();
